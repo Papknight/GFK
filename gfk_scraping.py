@@ -220,61 +220,88 @@ class GfkHitlistScrapper:
                                brands_all: bool = False, brands_specific: Optional[List[str]] = None,
                                features_all: bool = False, features_specific: Optional[List[str]] = None,
                                price_all: bool = False, price_specific: Optional[List[str]] = None):
+        # with open("to_scrap.txt", 'r') as text:
+        #     scrap_lis = []
+        #     lines = text.read().splitlines()
+        #     for line in lines:
+        #         if line in scrap_lis:
+        #             pass
+        #         else:
+        #             scrap_lis.append(line)
+        #     list_scrap = cat_lis[:]
 
         scraping_list = []
         index = 0
+        with open("categories.txt", 'r') as textfile:
+            cat_lis = []
+            lines = textfile.read().splitlines()
+            for line in lines:
+                if line in cat_lis:
+                    pass
+                else:
+                    cat_lis.append(line)
+            category_list = cat_lis[:]
 
         for category in categories:
-            if pos_types_specific is not None:
-                pos_types = pos_types_specific
-            else:
-                pos_types = ['Total']
-                if pos_type_all:
-                    pos_types.extend(['Offline', 'Online'])
-            for pos_type in pos_types:
-                if brands_specific is not None:
-                    brand_filters = brands_specific
+            if category not in cat_lis:
+                if pos_types_specific is not None:
+                    pos_types = pos_types_specific
                 else:
-                    brand_filters = ['Total']
-                    if brands_all:
-                        brand_filters.extend(category.brands)
-                for brand in brand_filters:
-                    if constr is not None:
-                        construction_features = constr
+                    pos_types = ['Total']
+                    if pos_type_all:
+                        pos_types.extend(['Offline', 'Online'])
+                for pos_type in pos_types:
+                    if brands_specific is not None:
+                        brand_filters = brands_specific
                     else:
-                        if 'CONSTR.2' in category.features.keys():
-                            construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
+                        brand_filters = ['Total']
+                        if brands_all:
+                            brand_filters.extend(category.brands)
+                    for brand in brand_filters:
+                        if constr is not None:
+                            construction_features = constr
                         else:
-                            construction_features = ['n/a']
-                    for construction in construction_features:
-                        feature_group_filters_keys = ['Total']
-                        if features_all:
-                            feature_group_filters_keys.extend(category.features.keys())
                             if 'CONSTR.2' in category.features.keys():
-                                feature_group_filters_keys.remove('CONSTR.2')
-                        for feature_group in feature_group_filters_keys:
-                            if features_all and feature_group == 'Total' or not features_all:
-                                feature_filters = ['Total']
+                                construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
                             else:
-                                feature_filters = category.features[feature_group]
-                            for feature_filter in feature_filters:
-                                price_filters = ['Total']
-                                if price_all:
-                                    price_filters.extend(category.price_classes)
-                                for price_filter in price_filters:
-                                    new_item = {'index': index,
-                                                'category': category.name,
-                                                'pos_type': pos_type,
-                                                'brand': brand,
-                                                'constr': construction,
-                                                'feature_group': feature_group,
-                                                'feature_filter': feature_filter,
-                                                'price_class': price_filter,
-                                                'finished': False}
+                                construction_features = ['n/a']
+                        for construction in construction_features:
+                            feature_group_filters_keys = ['Total']
+                            if features_all:
+                                feature_group_filters_keys.extend(category.features.keys())
+                                if 'CONSTR.2' in category.features.keys():
+                                    feature_group_filters_keys.remove('CONSTR.2')
+                            for feature_group in feature_group_filters_keys:
+                                if features_all and feature_group == 'Total' or not features_all:
+                                    feature_filters = ['Total']
+                                else:
+                                    feature_filters = category.features[feature_group]
+                                for feature_filter in feature_filters:
+                                    price_filters = ['Total']
+                                    if price_all:
+                                        price_filters.extend(category.price_classes)
+                                    for price_filter in price_filters:
+                                        new_item = {'index': index,
+                                                    'category': category.name,
+                                                    'pos_type': pos_type,
+                                                    'brand': brand,
+                                                    'constr': construction,
+                                                    'feature_group': feature_group,
+                                                    'feature_filter': feature_filter,
+                                                    'price_class': price_filter,
+                                                    'finished': False}
+                                        if category.name in cat_lis:
+                                            pass
+                                        else:
+                                            category_list.append(category.name)
 
-                                    scraping_list.append(new_item)
-                                    index += 1
+                                            scraping_list.append(new_item)
+                                            index += 1
+            else:
+                pass
 
+        with open('categories.txt', 'w') as f:
+            f.write('\n'.join(cat_lis))
         self.save_scraping_list(scraping_list)
 
     def set_hitlist_report(self, hd_screen: bool, change_period: bool = False):
@@ -601,30 +628,37 @@ def prepare(scraper: GfkHitlistScrapper, hd_screen: bool, change_period: bool, c
         scraper.clear_hitlist_file()
     # scraper.set_hitlist_report(hd_screen, change_period)
 
-    # my_MDA_categories = scraper.gfk_dict.get_lvl1_categories('Major Domestic Appliances')
+    my_MDA_categories = scraper.gfk_dict.get_lvl1_categories('Major Domestic Appliances')
     # my_SDA_categories = scraper.gfk_dict.get_lvl1_categories('Small Domestic Appliances')
     # my_CE_categories = scraper.gfk_dict.get_lvl1_categories('Consumer Electronics')
     # my_MTG_categories = scraper.gfk_dict.get_lvl1_categories('Multifunctional Technical Good')
     # my_OE_categories = scraper.gfk_dict.get_lvl1_categories('Office Equipment')
-    my_Telecom_categories = scraper.gfk_dict.get_lvl1_categories('Telecom')
+    # my_Telecom_categories = scraper.gfk_dict.get_lvl1_categories('Telecom')
     # my_IT_categories = scraper.gfk_dict.get_lvl1_categories('Information Technology')
     # my_Photo_categories = scraper.gfk_dict.get_lvl1_categories('Photo')
 
     my_categories = []
     # my_categories.extend(my_CE_categories)
-    # my_categories.extend(my_MDA_categories)
+    my_categories.extend(my_MDA_categories)
     # my_categories.extend(my_SDA_categories)
-    my_categories.extend(my_Telecom_categories)
+    # my_categories.extend(my_Telecom_categories)
     # my_categories.extend(my_IT_categories)
     # my_categories.extend(my_MTG_categories)
     # my_categories.extend(my_OE_categories)
     # my_categories.extend(my_Photo_categories)
 
-    # cat1 = scraper.gfk_dict.get_category('MICROWAVE OVENS')
+    # cat1 = scraper.gfk_dict.get_category('COOKING')
+    # cat2 = scraper.gfk_dict.get_category('COOLING')
+    # cat3 = scraper.gfk_dict.get_category('HOODS')
+    # cat4 = scraper.gfk_dict.get_category('WASHINGMACHINES')
+    # cat5 = scraper.gfk_dict.get_category('TUMBLEDRYERS')
+    # cat6 = scraper.gfk_dict.get_category('FREEZERS')
+    # cat7 = scraper.gfk_dict.get_category('MICROWAVE OVENS')
+
     # brands = ['SAMSUNG', 'ELECTROLUX', 'AMICA', 'BOSCH', 'BEKO', 'WHIRLPOOL', 'LG', 'SIEMENS', 'GORENJE', 'INDESIT',
     #           'CANDY']
 
-    # my_categories = [cat1]
+    # my_categories = [cat2, cat3, cat5, cat6]
 
     # constr.2 types: 'BUILT IN/UNDER', 'FREESTANDING'
     scraper.generate_scraping_list(categories=my_categories, pos_type_all=True,
@@ -654,7 +688,8 @@ if __name__ == '__main__':
     # url = 'https://insightui.gfk.com/report/116a?docId=76491'  # luty 2021
     # url = 'https://insightui.gfk.com/report/116a?docId=81482' # marzec 2021
     # url = 'https://insightui.gfk.com/report/116a?docId=86087' # kwiecień 2021
-    url = 'https://insightui.gfk.com/report/116a?docId=91761' # maj 2021
+    # url = 'https://insightui.gfk.com/report/116a?docId=91761' # maj 2021
+    url = 'https://insightui.gfk.com/report/116a?docId=95268'  # czerwiec 2021
 
     hd_screen = True
     change_period = False
