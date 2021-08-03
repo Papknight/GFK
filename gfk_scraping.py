@@ -220,18 +220,18 @@ class GfkHitlistScrapper:
                                brands_all: bool = False, brands_specific: Optional[List[str]] = None,
                                features_all: bool = False, features_specific: Optional[List[str]] = None,
                                price_all: bool = False, price_specific: Optional[List[str]] = None):
-        # with open("to_scrap.txt", 'r') as text:
-        #     scrap_lis = []
-        #     linie = text.read().splitlines()
-        #     for line in linie:
-        #         if line in scrap_lis:
-        #             pass
-        #         else:
-        #             scrap_lis.append(line)
-        #     list_scrap = scrap_lis[:]
 
         scraping_list = []
         index = 0
+        with open("to_scrap.txt", 'r') as text:
+            scrap_lis = []
+            linie = text.read().splitlines()
+            for line in linie:
+                if line in scrap_lis:
+                    pass
+                else:
+                    scrap_lis.append(line)
+            list_scrap = scrap_lis[:]
         with open("categories.txt", 'r') as textfile:
             cat_lis = []
             lines = textfile.read().splitlines()
@@ -243,66 +243,66 @@ class GfkHitlistScrapper:
             category_list = cat_lis[:]
 
         for category in categories:
-            # if category in list_scrap:
-            if category not in cat_lis:
-                if pos_types_specific is not None:
-                    pos_types = pos_types_specific
-                else:
-                    pos_types = ['Total']
-                    if pos_type_all:
-                        pos_types.extend(['Offline', 'Online'])
-                for pos_type in pos_types:
-                    if brands_specific is not None:
-                        brand_filters = brands_specific
+            if category.name in list_scrap:
+                if category.name not in cat_lis:
+                    if pos_types_specific is not None:
+                        pos_types = pos_types_specific
                     else:
-                        brand_filters = ['Total']
-                        if brands_all:
-                            brand_filters.extend(category.brands)
-                    for brand in brand_filters:
-                        if constr is not None:
-                            construction_features = constr
+                        pos_types = ['Total']
+                        if pos_type_all:
+                            pos_types.extend(['Offline', 'Online'])
+                    for pos_type in pos_types:
+                        if brands_specific is not None:
+                            brand_filters = brands_specific
                         else:
-                            if 'CONSTR.2' in category.features.keys():
-                                construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
+                            brand_filters = ['Total']
+                            if brands_all:
+                                brand_filters.extend(category.brands)
+                        for brand in brand_filters:
+                            if constr is not None:
+                                construction_features = constr
                             else:
-                                construction_features = ['n/a']
-                        for construction in construction_features:
-                            feature_group_filters_keys = ['Total']
-                            if features_all:
-                                feature_group_filters_keys.extend(category.features.keys())
                                 if 'CONSTR.2' in category.features.keys():
-                                    feature_group_filters_keys.remove('CONSTR.2')
-                            for feature_group in feature_group_filters_keys:
-                                if features_all and feature_group == 'Total' or not features_all:
-                                    feature_filters = ['Total']
+                                    construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
                                 else:
-                                    feature_filters = category.features[feature_group]
-                                for feature_filter in feature_filters:
-                                    price_filters = ['Total']
-                                    if price_all:
-                                        price_filters.extend(category.price_classes)
-                                    for price_filter in price_filters:
-                                        new_item = {'index': index,
-                                                    'category': category.name,
-                                                    'pos_type': pos_type,
-                                                    'brand': brand,
-                                                    'constr': construction,
-                                                    'feature_group': feature_group,
-                                                    'feature_filter': feature_filter,
-                                                    'price_class': price_filter,
-                                                    'finished': False}
-                                        if category.name in cat_lis:
-                                            pass
-                                        else:
-                                            category_list.append(category.name)
+                                    construction_features = ['n/a']
+                            for construction in construction_features:
+                                feature_group_filters_keys = ['Total']
+                                if features_all:
+                                    feature_group_filters_keys.extend(category.features.keys())
+                                    if 'CONSTR.2' in category.features.keys():
+                                        feature_group_filters_keys.remove('CONSTR.2')
+                                for feature_group in feature_group_filters_keys:
+                                    if features_all and feature_group == 'Total' or not features_all:
+                                        feature_filters = ['Total']
+                                    else:
+                                        feature_filters = category.features[feature_group]
+                                    for feature_filter in feature_filters:
+                                        price_filters = ['Total']
+                                        if price_all:
+                                            price_filters.extend(category.price_classes)
+                                        for price_filter in price_filters:
+                                            new_item = {'index': index,
+                                                        'category': category.name,
+                                                        'pos_type': pos_type,
+                                                        'brand': brand,
+                                                        'constr': construction,
+                                                        'feature_group': feature_group,
+                                                        'feature_filter': feature_filter,
+                                                        'price_class': price_filter,
+                                                        'finished': False}
+                                            if category.name in cat_lis:
+                                                pass
+                                            else:
+                                                category_list.append(category.name)
 
-                                            scraping_list.append(new_item)
-                                            index += 1
-                # cat_lis.append(category.name)
+                                                scraping_list.append(new_item)
+                                                index += 1
+                    # cat_lis.append(category.name)
+                else:
+                    pass
             else:
                 pass
-        # else:
-        #     pass
         for _ in category_list:
             if _ not in cat_lis:
                 cat_lis.append(_)
@@ -634,23 +634,23 @@ def prepare(scraper: GfkHitlistScrapper, hd_screen: bool, change_period: bool, c
         scraper.clear_hitlist_file()
     # scraper.set_hitlist_report(hd_screen, change_period)
 
-    # my_MDA_categories = scraper.gfk_dict.get_lvl1_categories('Major Domestic Appliances')
-    # my_SDA_categories = scraper.gfk_dict.get_lvl1_categories('Small Domestic Appliances')
-    # my_CE_categories = scraper.gfk_dict.get_lvl1_categories('Consumer Electronics')
-    # my_MTG_categories = scraper.gfk_dict.get_lvl1_categories('Multifunctional Technical Good')
-    # my_OE_categories = scraper.gfk_dict.get_lvl1_categories('Office Equipment')
-    # my_Telecom_categories = scraper.gfk_dict.get_lvl1_categories('Telecom')
-    # my_IT_categories = scraper.gfk_dict.get_lvl1_categories('Information Technology')
+    my_MDA_categories = scraper.gfk_dict.get_lvl1_categories('Major Domestic Appliances')
+    my_SDA_categories = scraper.gfk_dict.get_lvl1_categories('Small Domestic Appliances')
+    my_CE_categories = scraper.gfk_dict.get_lvl1_categories('Consumer Electronics')
+    my_MTG_categories = scraper.gfk_dict.get_lvl1_categories('Multifunctional Technical Good')
+    my_OE_categories = scraper.gfk_dict.get_lvl1_categories('Office Equipment')
+    my_Telecom_categories = scraper.gfk_dict.get_lvl1_categories('Telecom')
+    my_IT_categories = scraper.gfk_dict.get_lvl1_categories('Information Technology')
     my_Photo_categories = scraper.gfk_dict.get_lvl1_categories('Photo')
 
     my_categories = []
-    # my_categories.extend(my_CE_categories)
-    # my_categories.extend(my_MDA_categories)
-    # my_categories.extend(my_SDA_categories)
-    # my_categories.extend(my_Telecom_categories)
-    # my_categories.extend(my_IT_categories)
-    # my_categories.extend(my_MTG_categories)
-    # my_categories.extend(my_OE_categories)
+    my_categories.extend(my_CE_categories)
+    my_categories.extend(my_MDA_categories)
+    my_categories.extend(my_SDA_categories)
+    my_categories.extend(my_Telecom_categories)
+    my_categories.extend(my_IT_categories)
+    my_categories.extend(my_MTG_categories)
+    my_categories.extend(my_OE_categories)
     my_categories.extend(my_Photo_categories)
 
     # cat1 = scraper.gfk_dict.get_category('COOKING')
