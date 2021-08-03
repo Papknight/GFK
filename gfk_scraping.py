@@ -222,13 +222,13 @@ class GfkHitlistScrapper:
                                price_all: bool = False, price_specific: Optional[List[str]] = None):
         # with open("to_scrap.txt", 'r') as text:
         #     scrap_lis = []
-        #     lines = text.read().splitlines()
-        #     for line in lines:
+        #     linie = text.read().splitlines()
+        #     for line in linie:
         #         if line in scrap_lis:
         #             pass
         #         else:
         #             scrap_lis.append(line)
-        #     list_scrap = cat_lis[:]
+        #     list_scrap = scrap_lis[:]
 
         scraping_list = []
         index = 0
@@ -243,6 +243,7 @@ class GfkHitlistScrapper:
             category_list = cat_lis[:]
 
         for category in categories:
+            # if category in list_scrap:
             if category not in cat_lis:
                 if pos_types_specific is not None:
                     pos_types = pos_types_specific
@@ -297,9 +298,14 @@ class GfkHitlistScrapper:
 
                                             scraping_list.append(new_item)
                                             index += 1
+                # cat_lis.append(category.name)
             else:
                 pass
-
+        # else:
+        #     pass
+        for _ in category_list:
+            if _ not in cat_lis:
+                cat_lis.append(_)
         with open('categories.txt', 'w') as f:
             f.write('\n'.join(cat_lis))
         self.save_scraping_list(scraping_list)
@@ -628,24 +634,24 @@ def prepare(scraper: GfkHitlistScrapper, hd_screen: bool, change_period: bool, c
         scraper.clear_hitlist_file()
     # scraper.set_hitlist_report(hd_screen, change_period)
 
-    my_MDA_categories = scraper.gfk_dict.get_lvl1_categories('Major Domestic Appliances')
+    # my_MDA_categories = scraper.gfk_dict.get_lvl1_categories('Major Domestic Appliances')
     # my_SDA_categories = scraper.gfk_dict.get_lvl1_categories('Small Domestic Appliances')
     # my_CE_categories = scraper.gfk_dict.get_lvl1_categories('Consumer Electronics')
     # my_MTG_categories = scraper.gfk_dict.get_lvl1_categories('Multifunctional Technical Good')
     # my_OE_categories = scraper.gfk_dict.get_lvl1_categories('Office Equipment')
     # my_Telecom_categories = scraper.gfk_dict.get_lvl1_categories('Telecom')
     # my_IT_categories = scraper.gfk_dict.get_lvl1_categories('Information Technology')
-    # my_Photo_categories = scraper.gfk_dict.get_lvl1_categories('Photo')
+    my_Photo_categories = scraper.gfk_dict.get_lvl1_categories('Photo')
 
     my_categories = []
     # my_categories.extend(my_CE_categories)
-    my_categories.extend(my_MDA_categories)
+    # my_categories.extend(my_MDA_categories)
     # my_categories.extend(my_SDA_categories)
     # my_categories.extend(my_Telecom_categories)
     # my_categories.extend(my_IT_categories)
     # my_categories.extend(my_MTG_categories)
     # my_categories.extend(my_OE_categories)
-    # my_categories.extend(my_Photo_categories)
+    my_categories.extend(my_Photo_categories)
 
     # cat1 = scraper.gfk_dict.get_category('COOKING')
     # cat2 = scraper.gfk_dict.get_category('COOLING')
