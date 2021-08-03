@@ -243,66 +243,126 @@ class GfkHitlistScrapper:
             category_list = cat_lis[:]
 
         for category in categories:
-            if category.name in list_scrap:
-                if category.name not in cat_lis:
-                    if pos_types_specific is not None:
-                        pos_types = pos_types_specific
-                    else:
-                        pos_types = ['Total']
-                        if pos_type_all:
-                            pos_types.extend(['Offline', 'Online'])
-                    for pos_type in pos_types:
-                        if brands_specific is not None:
-                            brand_filters = brands_specific
+            if len(list_scrap) > 0:
+                if category.name in list_scrap:
+                    if category.name not in cat_lis:
+                        if pos_types_specific is not None:
+                            pos_types = pos_types_specific
                         else:
-                            brand_filters = ['Total']
-                            if brands_all:
-                                brand_filters.extend(category.brands)
-                        for brand in brand_filters:
-                            if constr is not None:
-                                construction_features = constr
+                            pos_types = ['Total']
+                            if pos_type_all:
+                                pos_types.extend(['Offline', 'Online'])
+                        for pos_type in pos_types:
+                            if brands_specific is not None:
+                                brand_filters = brands_specific
                             else:
-                                if 'CONSTR.2' in category.features.keys():
-                                    construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
+                                brand_filters = ['Total']
+                                if brands_all:
+                                    brand_filters.extend(category.brands)
+                            for brand in brand_filters:
+                                if constr is not None:
+                                    construction_features = constr
                                 else:
-                                    construction_features = ['n/a']
-                            for construction in construction_features:
-                                feature_group_filters_keys = ['Total']
-                                if features_all:
-                                    feature_group_filters_keys.extend(category.features.keys())
                                     if 'CONSTR.2' in category.features.keys():
-                                        feature_group_filters_keys.remove('CONSTR.2')
-                                for feature_group in feature_group_filters_keys:
-                                    if features_all and feature_group == 'Total' or not features_all:
-                                        feature_filters = ['Total']
+                                        construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
                                     else:
-                                        feature_filters = category.features[feature_group]
-                                    for feature_filter in feature_filters:
-                                        price_filters = ['Total']
-                                        if price_all:
-                                            price_filters.extend(category.price_classes)
-                                        for price_filter in price_filters:
-                                            new_item = {'index': index,
-                                                        'category': category.name,
-                                                        'pos_type': pos_type,
-                                                        'brand': brand,
-                                                        'constr': construction,
-                                                        'feature_group': feature_group,
-                                                        'feature_filter': feature_filter,
-                                                        'price_class': price_filter,
-                                                        'finished': False}
-                                            if category.name in cat_lis:
-                                                pass
-                                            else:
-                                                category_list.append(category.name)
+                                        construction_features = ['n/a']
+                                for construction in construction_features:
+                                    feature_group_filters_keys = ['Total']
+                                    if features_all:
+                                        feature_group_filters_keys.extend(category.features.keys())
+                                        if 'CONSTR.2' in category.features.keys():
+                                            feature_group_filters_keys.remove('CONSTR.2')
+                                    for feature_group in feature_group_filters_keys:
+                                        if features_all and feature_group == 'Total' or not features_all:
+                                            feature_filters = ['Total']
+                                        else:
+                                            feature_filters = category.features[feature_group]
+                                        for feature_filter in feature_filters:
+                                            price_filters = ['Total']
+                                            if price_all:
+                                                price_filters.extend(category.price_classes)
+                                            for price_filter in price_filters:
+                                                new_item = {'index': index,
+                                                            'category': category.name,
+                                                            'pos_type': pos_type,
+                                                            'brand': brand,
+                                                            'constr': construction,
+                                                            'feature_group': feature_group,
+                                                            'feature_filter': feature_filter,
+                                                            'price_class': price_filter,
+                                                            'finished': False}
+                                                if category.name in cat_lis:
+                                                    pass
+                                                else:
+                                                    category_list.append(category.name)
 
-                                                scraping_list.append(new_item)
-                                                index += 1
-                    # cat_lis.append(category.name)
+                                                    scraping_list.append(new_item)
+                                                    index += 1
+                        # cat_lis.append(category.name)
+                    else:
+                        pass
                 else:
                     pass
             else:
-                pass
+                    if category.name not in cat_lis:
+                        if pos_types_specific is not None:
+                            pos_types = pos_types_specific
+                        else:
+                            pos_types = ['Total']
+                            if pos_type_all:
+                                pos_types.extend(['Offline', 'Online'])
+                        for pos_type in pos_types:
+                            if brands_specific is not None:
+                                brand_filters = brands_specific
+                            else:
+                                brand_filters = ['Total']
+                                if brands_all:
+                                    brand_filters.extend(category.brands)
+                            for brand in brand_filters:
+                                if constr is not None:
+                                    construction_features = constr
+                                else:
+                                    if 'CONSTR.2' in category.features.keys():
+                                        construction_features = ['BUILT IN/UNDER', 'FREESTANDING']
+                                    else:
+                                        construction_features = ['n/a']
+                                for construction in construction_features:
+                                    feature_group_filters_keys = ['Total']
+                                    if features_all:
+                                        feature_group_filters_keys.extend(category.features.keys())
+                                        if 'CONSTR.2' in category.features.keys():
+                                            feature_group_filters_keys.remove('CONSTR.2')
+                                    for feature_group in feature_group_filters_keys:
+                                        if features_all and feature_group == 'Total' or not features_all:
+                                            feature_filters = ['Total']
+                                        else:
+                                            feature_filters = category.features[feature_group]
+                                        for feature_filter in feature_filters:
+                                            price_filters = ['Total']
+                                            if price_all:
+                                                price_filters.extend(category.price_classes)
+                                            for price_filter in price_filters:
+                                                new_item = {'index': index,
+                                                            'category': category.name,
+                                                            'pos_type': pos_type,
+                                                            'brand': brand,
+                                                            'constr': construction,
+                                                            'feature_group': feature_group,
+                                                            'feature_filter': feature_filter,
+                                                            'price_class': price_filter,
+                                                            'finished': False}
+                                                if category.name in cat_lis:
+                                                    pass
+                                                else:
+                                                    category_list.append(category.name)
+
+                                                    scraping_list.append(new_item)
+                                                    index += 1
+                        # cat_lis.append(category.name)
+                    else:
+                        pass
+
         for _ in category_list:
             if _ not in cat_lis:
                 cat_lis.append(_)
